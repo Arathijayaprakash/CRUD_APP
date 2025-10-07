@@ -22,23 +22,22 @@ export default function LoginForm() {
         }
     };
 
-    const handleRegisterRedirect = () => {
-        router.push("/register");
-    };
-
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md mx-auto p-6 bg-white shadow-md rounded-xl dark:bg-gray-900">
             <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-gray-200">Login</h2>
             <input name="email" onChange={handleChange} placeholder="Email" type="email" className="p-2 border rounded-lg" />
             <input name="password" onChange={handleChange} placeholder="Password" type="password" className="p-2 border rounded-lg" />
             <button type="submit" className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Login</button>
-            <button
-                type="button"
-                onClick={handleRegisterRedirect}
-                className="text-blue-600 hover:underline"
-            >
-                Don’t have an account? Register
-            </button>
+            <p className="text-center text-sm text-gray-600 dark:text-gray-300 mt-2">
+                Don’t have an account?{" "}
+                <button
+                    type="button"
+                    onClick={() => router.push("/register")}
+                    className="text-blue-600 hover:underline dark:text-blue-400"
+                >
+                    Register
+                </button>
+            </p>
         </form>
     );
 }
