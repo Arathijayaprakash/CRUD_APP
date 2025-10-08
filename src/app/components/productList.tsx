@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { deleteProductAPI, getProducts } from "../api/products";
-import { useAppDispatch, useAppSelector } from "../lib/hooks";
-import { setProducts, deleteProduct } from "../lib/features/products/productSlice";
 import ProductForm from "./productForm";
 import DeleteConfirmationModal from "./deleteConfirmationModal";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { deleteProduct, setProducts } from "@/lib/features/products/productSlice";
 
 export default function ProductList() {
     const products = useAppSelector((state) => state.products);

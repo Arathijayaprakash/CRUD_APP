@@ -9,7 +9,6 @@ export const loginUser = async (email: string, password: string) => {
 export const registerUser = async (user: any) => {
     const checkRes = await fetch(`${API_URL}?email=${user.email}`);
     const existingUsers = await checkRes.json();
-
     if (existingUsers.length > 0) {
         return { error: "User already exists" };
     }

@@ -1,27 +1,31 @@
 'use client';
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { registerUser } from "../../api/auth";
-import dayjs, { Dayjs } from 'dayjs'
-import { Autocomplete, Button, MenuItem, TextField } from "@mui/material";
+import dayjs from 'dayjs'
+import { Autocomplete, Button, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { getNames, getCode } from 'country-list';
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { RegisterFormInputs, registerSchema } from "./registerSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function RegisterForm() {
-    const [form, setForm] = useState({
-        name: "", email: "", dob: null as Dayjs | null, password: "", country: null as { name: string; code: string | undefined } | null,
-    });
     const router = useRouter();
+    const { handleSubmit, control, formState: { errors } } = useForm<RegisterFormInputs>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            name: '',
+            email: '',
+            dob: null,
+            password: '',
+            country: null
+        }
+    })
     const countries = getNames().map((name: string) => ({ name, code: getCode(name) }));
 
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLSelectElement | HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const payload = { ...form, dob: form.dob ? form.dob.format("YYYY-MM-DD") : "" };
+    const onSubmit: SubmitHandler<RegisterFormInputs> = async (data) => {
+        const payload = { ...data, dob: data.dob ? dayjs(data.dob).format('YYYY-MM-DD') : '', country: data.country ? data.country.name : '' }
         const result = await registerUser(payload);
         if (result.error) {
             alert(result.error);
@@ -29,55 +33,104 @@ export default function RegisterForm() {
         }
         alert("Registered successfully!");
         router.push("/login");
-    };
+    }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md mx-auto p-6 bg-white shadow-md rounded-xl dark:bg-gray-900">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 max-w-md mx-auto p-6 bg-white shadow-md rounded-xl dark:bg-gray-900">
             <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-gray-200">Register</h2>
-            <TextField
-                label="Name"
+            <Controller
                 name="name"
-                value={form.name}
-                onChange={handleChange}
-                fullWidth
-                variant="outlined"
-                size="small"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        label="Name"
+                        fullWidth
+                        size="small"
+                        variant="outlined"
+                        error={!!errors.name}
+                        helperText={errors.name?.message}
+                    />
+                )}
             />
-            <TextField
-                label="Email"
+
+            <Controller
                 name="email"
-                value={form.email}
-                onChange={handleChange}
-                fullWidth
-                type="email"
-                variant="outlined"
-                size="small"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        label="Email"
+                        fullWidth
+                        size="small"
+                        variant="outlined"
+                        type="email"
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                    />
+                )}
             />
+
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                    label="Date of Birth"
-                    value={form.dob}
-                    onChange={(newValue) => setForm({ ...form, dob: newValue })}
-                    maxDate={dayjs()}
+                <Controller
+                    name="dob"
+                    control={control}
+                    render={({ field }) => (
+                        <DatePicker
+                            label="Date of Birth"
+                            value={field.value ? dayjs(field.value) : null}
+                            onChange={(newValue) => field.onChange(newValue?.toDate() || null)}
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                    size: "small",
+                                    error: !!errors.dob,
+                                    helperText: errors.dob?.message
+                                },
+                            }}
+                        />
+                    )}
                 />
             </LocalizationProvider>
 
-            <TextField
-                label="Password"
+            <Controller
                 name="password"
-                value={form.password}
-                onChange={handleChange}
-                fullWidth
-                type="password"
-                variant="outlined"
-                size="small"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        label="Password"
+                        fullWidth
+                        size="small"
+                        variant="outlined"
+                        type="password"
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                    />
+                )}
             />
-            <Autocomplete
-                options={countries}
-                getOptionLabel={(option) => option.name}
-                value={form.country}
-                onChange={(_, newValue) => setForm({ ...form, country: newValue })}
-                renderInput={(params) => <TextField {...params} label="Country" fullWidth size="small" />}
+
+            <Controller
+                name="country"
+                control={control}
+                render={({ field }) => (
+                    <Autocomplete
+                        options={countries}
+                        getOptionLabel={(option) => option.name}
+                        value={field.value}
+                        onChange={(_, newValue) => field.onChange(newValue)}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Country"
+                                fullWidth
+                                size="small"
+                                error={!!errors.country}
+                                helperText={errors.country?.message}
+                            />
+                        )}
+                    />
+                )}
             />
 
             <button

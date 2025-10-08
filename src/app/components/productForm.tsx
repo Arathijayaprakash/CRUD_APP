@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { v4 as uuidv4 } from "uuid";
 import { addProductApi, getProductsById, updateProductAPI } from "../api/products";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useAppDispatch } from "../lib/hooks";
-import { addProduct, updateProduct } from "../lib/features/products/productSlice";
+import { useAppDispatch } from "@/lib/hooks";
+import { addProduct, updateProduct } from "@/lib/features/products/productSlice";
 
 const productSchema = z.object({
     id: z.any().optional(),

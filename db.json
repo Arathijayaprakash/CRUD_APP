@@ -1,38 +1,6 @@
 {
   "users": [
     {
-      "id": "5515",
-      "name": "Arathi",
-      "email": "arathj@gmail.com",
-      "dob": "2000-05-17",
-      "password": "Arathi@123",
-      "country": "India"
-    },
-    {
-      "id": "5564",
-      "name": "Joanna",
-      "email": "jo@gmail.com",
-      "dob": "2000-11-12",
-      "password": "Jo@12345",
-      "country": "India"
-    },
-    {
-      "id": "585b",
-      "name": "Aleeda",
-      "email": "aleeda@gmail.com",
-      "dob": "2005-10-06",
-      "password": "Aleeda@123",
-      "country": "India"
-    },
-    {
-      "id": "0c49",
-      "name": "Akshay",
-      "email": "akshay@gmail.com",
-      "dob": "1999-08-23",
-      "password": "Akshay@123",
-      "country": "India"
-    },
-    {
       "id": "0f4b",
       "name": "Akshay",
       "email": "akshay@gmail.com",
@@ -42,6 +10,25 @@
         "name": "India",
         "code": "IN"
       }
+    },
+    {
+      "id": "f067",
+      "name": "Arathi",
+      "email": "arathi@gmail.com",
+      "dob": "2000-10-07",
+      "password": "Arathi@123",
+      "country": {
+        "name": "India",
+        "code": "IN"
+      }
+    },
+    {
+      "id": "b053",
+      "name": "Joanna Biju",
+      "email": "jo@gmail.com",
+      "dob": "2000-11-22",
+      "password": "Jo@123",
+      "country": "India"
     }
   ],
   "products": [
