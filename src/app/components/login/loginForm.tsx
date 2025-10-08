@@ -1,13 +1,13 @@
 'use client';
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser } from "../../api/auth";
 import { useForm } from "react-hook-form";
 import { LoginFormValues, loginSchema } from "./loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { useAuth } from "@/context/auth/AuthContext";
 
 export default function LoginForm() {
+    const { login } = useAuth()
     const router = useRouter();
 
     const {
@@ -20,11 +20,8 @@ export default function LoginForm() {
     });
 
     const onSubmit = async (data: LoginFormValues) => {
-        const user = await loginUser(data.email, data.password);
-        if (user) {
-            localStorage.setItem("user", JSON.stringify(user));
-            router.push("/dashboard");
-        } else {
+        const success = await login(data.email, data.password);
+        if (!success) {
             alert("Invalid credentials");
         }
     };

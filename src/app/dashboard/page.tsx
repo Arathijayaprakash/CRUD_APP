@@ -1,20 +1,15 @@
 'use client';
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import ProductForm from "../components/addProduct/productForm";
 import ProductList from "../components/productList";
+import { useAuth } from "@/context/auth/AuthContext";
 
 export default function DashboardPage() {
-    const [user, setUser] = useState<any>(null);
-    const router = useRouter();
+    const { user, logout } = useAuth();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (!storedUser) router.push("/login");
-        else setUser(JSON.parse(storedUser));
-    }, [router]);
-
+    console.log(user, "@123")
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
             {user ? (
@@ -27,10 +22,7 @@ export default function DashboardPage() {
                     >Add Product</button>
                     <ProductList />
                     <button
-                        onClick={() => {
-                            localStorage.removeItem("user");
-                            router.push("/login");
-                        }}
+                        onClick={logout}
                         className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
                     >
                         Logout
