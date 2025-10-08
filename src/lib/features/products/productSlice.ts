@@ -1,4 +1,4 @@
-import { ProductFormData } from "@/app/components/productForm";
+import { ProductFormData } from "@/app/components/addProduct/productSchema";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: ProductFormData[] = []

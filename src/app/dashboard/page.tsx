@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import ProductForm from "../components/productForm";
+import ProductForm from "../components/addProduct/productForm";
 import ProductList from "../components/productList";
 
 export default function DashboardPage() {
@@ -47,7 +47,6 @@ export default function DashboardPage() {
                     >
                         ×
                     </button>
-                    <h2 className="text-2xl font-semibold mb-4 text-center">Add Product</h2>
                     <ProductForm setIsModalOpen={setIsModalOpen} />
                 </div>
 

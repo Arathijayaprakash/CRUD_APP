@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { deleteProductAPI, getProducts } from "../api/products";
-import ProductForm from "./productForm";
+import ProductForm from "./addProduct/productForm";
 import DeleteConfirmationModal from "./deleteConfirmationModal";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { deleteProduct, setProducts } from "@/lib/features/products/productSlice";
@@ -120,9 +120,6 @@ export default function ProductList() {
                         >
                             ×
                         </button>
-                        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800 dark:text-gray-100">
-                            Edit Product
-                        </h2>
                         <ProductForm setIsModalOpen={setIsEditing} editId={editId} />
                     </div>
                 </div>

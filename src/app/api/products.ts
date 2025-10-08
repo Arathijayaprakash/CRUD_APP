@@ -1,4 +1,4 @@
-import { ProductFormData } from "../components/productForm";
+import { ProductFormData } from "../components/addProduct/productSchema";
 
 const API_URL = "http://localhost:5000/products";
 

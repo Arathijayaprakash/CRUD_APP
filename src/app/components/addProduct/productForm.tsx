@@ -1,23 +1,16 @@
 "use client";
 
-import { Resolver, useForm } from "react-hook-form";
-import { z } from "zod";
+import { Controller, Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { v4 as uuidv4 } from "uuid";
-import { addProductApi, getProductsById, updateProductAPI } from "../api/products";
+import { addProductApi, getProductsById, updateProductAPI } from "../../api/products";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAppDispatch } from "@/lib/hooks";
 import { addProduct, updateProduct } from "@/lib/features/products/productSlice";
+import { ProductFormData, productSchema } from "./productSchema";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
-const productSchema = z.object({
-    id: z.any().optional(),
-    name: z.string().min(1, "Name is required"),
-    price: z.coerce.number().min(1, "Price must be greater than 0"),
-    sku: z.string().min(1, "SKU is required"),
-    image: z.any().optional(),
-});
-
-export type ProductFormData = z.infer<typeof productSchema>;
 
 export default function ProductForm({
     setIsModalOpen,
@@ -26,13 +19,20 @@ export default function ProductForm({
     setIsModalOpen: Dispatch<SetStateAction<boolean>>;
     editId?: string;
 }) {
+
     const dispatch = useAppDispatch();
     const [imagePreview, setImagePreview] = useState("");
-    const [isImageChanged, setIsImageChanged] = useState(false); // ✅ track new image selection
-    const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<ProductFormData>({
+    const [isImageChanged, setIsImageChanged] = useState(false);
+    const { handleSubmit, formState: { errors }, reset, setValue, control, getValues } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema) as Resolver<any>,
+        defaultValues: {
+            name: "",
+            price: 0,
+            sku: "",
+            image: undefined,
+        },
     });
-    console.log(watch('image'), "image")
+
     useEffect(() => {
         if (editId) {
             const fetchProductById = async () => {
@@ -57,7 +57,6 @@ export default function ProductForm({
         }
     }, [editId, reset]);
 
-    // ✅ Convert file to Base64
     const convertToBase64 = (file: File): Promise<string> =>
         new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -66,13 +65,11 @@ export default function ProductForm({
             reader.onerror = (error) => reject(error);
         });
 
-    // ✅ Handle form submission
     const onSubmit = async (data: ProductFormData) => {
         console.log(data.image, "onSubmitData@123")
         try {
             let imageBase64 = imagePreview;
 
-            // Handle new image selection
             if (isImageChanged && data.image?.[0]) {
                 imageBase64 = await convertToBase64(data.image[0]);
             }
@@ -103,79 +100,128 @@ export default function ProductForm({
     };
 
     return (
-        <form
+        <Box
+            component="form"
             onSubmit={handleSubmit(onSubmit)}
-            className="p-4 bg-white shadow-md rounded-lg flex flex-col gap-4 max-w-md mx-auto"
+            className="p-6 bg-white shadow-md rounded-lg flex flex-col gap-4 max-w-md mx-auto"
         >
-            <input
-                {...register("name")}
-                placeholder="Product Name"
-                className="p-2 border rounded"
-            />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            <Typography variant="h6" textAlign="center" gutterBottom>
+                {editId ? "Edit Product" : "Add Product"}
+            </Typography>
 
-            <input
-                {...register("price")}
-                type="number"
-                placeholder="Price"
-                className="p-2 border rounded"
+            {/* Product Name */}
+            <Controller
+                name="name"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        label="Product Name"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        error={!!errors.name}
+                        helperText={errors.name?.message}
+                    />
+                )}
             />
-            {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
 
-            <input
-                {...register("sku")}
-                placeholder="SKU Number"
-                className="p-2 border rounded"
+            {/* Price */}
+            <Controller
+                name="price"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        label="Price"
+                        type="number"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        error={!!errors.price}
+                        helperText={errors.price?.message}
+                    />
+                )}
             />
-            {errors.sku && <p className="text-red-500 text-sm">{errors.sku.message}</p>}
 
-            <div className="relative inline-block">
-                <label className="p-2 border rounded bg-gray-100 cursor-pointer">
+            {/* SKU */}
+            <Controller
+                name="sku"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        label="SKU Number"
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        error={!!errors.sku}
+                        helperText={errors.sku?.message}
+                    />
+                )}
+            />
+
+            {/* Image Upload */}
+            <Box>
+                <Button
+                    variant="outlined"
+                    component="label"
+                    fullWidth
+                >
                     {imagePreview ? "Change Image" : "Select Image"}
                     <input
                         type="file"
-                        {...register("image")}
-                        className="hidden"
+                        hidden
                         onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
-                                console.log(file, "fileonChange@123")
                                 setImagePreview(URL.createObjectURL(file));
                                 setIsImageChanged(true);
-                                setValue('image', [file])
+                                setValue("image", e.target.files);
                             }
                         }}
                     />
-                </label>
+                </Button>
 
                 {imagePreview && (
-                    <div className="mt-2 relative w-32 h-32">
+                    <Box mt={2} position="relative" display="inline-block">
                         <img
                             src={imagePreview}
                             alt="Preview"
-                            className="w-32 h-32 object-cover rounded"
+                            className="w-32 h-32 object-cover rounded-md border"
                         />
-                        <button
-                            type="button"
-                            className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                        <IconButton
+                            size="small"
+                            color="error"
+                            sx={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                backgroundColor: "white",
+                                "&:hover": { backgroundColor: "white" },
+                            }}
                             onClick={() => {
                                 setImagePreview("");
                                 setIsImageChanged(false);
-                                reset({ ...reset, image: undefined });
+                                const currentValues = getValues();
+                                reset({ ...currentValues, image: undefined });
                             }}
                         >
-                            ×
-                        </button>
-                    </div>
+                            <CloseIcon fontSize="small" />
+                        </IconButton>
+                    </Box>
                 )}
-            </div>
+            </Box>
 
-            <button
+            {/* Submit Button */}
+            <Button
                 type="submit"
-                className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                variant="contained"
+                color="primary"
+                fullWidth
             >
                 {editId ? "Save Changes" : "Add Product"}
-            </button>
-        </form>
+            </Button>
+        </Box>
     );
 }
