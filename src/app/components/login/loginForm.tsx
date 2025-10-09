@@ -3,13 +3,16 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { LoginFormValues, loginSchema } from "./loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 import { useAuth } from "@/context/auth/AuthContext";
+import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function LoginForm() {
     const { login } = useAuth()
     const router = useRouter();
-
+    const [loginError, setLoginError] = useState<boolean>(false)
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const {
         register,
         handleSubmit,
@@ -18,12 +21,13 @@ export default function LoginForm() {
         resolver: zodResolver(loginSchema),
         mode: "onTouched",
     });
+    const handleClickShowPassword = () => {
+        setShowPassword((prev) => !prev);
+    };
 
     const onSubmit = async (data: LoginFormValues) => {
         const success = await login(data.email, data.password);
-        if (!success) {
-            alert("Invalid credentials");
-        }
+        setLoginError(!success);
     };
     return (
         <Box
@@ -34,7 +38,9 @@ export default function LoginForm() {
             <Typography variant="h5" align="center" className="text-gray-800 dark:text-gray-200">
                 Login
             </Typography>
-
+            {loginError && <Alert severity="error" className="mt-2">
+                Incorrect Email or Password
+            </Alert>}
             <TextField
                 label="Email"
                 type="email"
@@ -48,13 +54,24 @@ export default function LoginForm() {
 
             <TextField
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 {...register("password")}
                 error={!!errors.password}
                 helperText={errors.password?.message}
                 fullWidth
                 variant="outlined"
                 size="small"
+                slotProps={{
+                    input: {
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={handleClickShowPassword} edge="end">
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        )
+                    }
+                }}
             />
 
             <Button

@@ -9,6 +9,7 @@ import { ProductFormData, productSchema } from "./productSchema";
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { addProductThunk, updateProductThunk } from "@/lib/features/products/productThunk";
+import { toast } from "sonner";
 
 
 export default function ProductForm({
@@ -60,14 +61,16 @@ export default function ProductForm({
         try {
             if (editId) {
                 dispatch(updateProductThunk({ imagePreview, isImageChanged, data, editId }))
+                toast.success('Product Updated Successfully')
+
             } else {
                 dispatch(addProductThunk(data))
-                alert("Product added successfully!");
+                toast.success('Product added Successfully')
             }
             reset();
             setIsModalOpen(false);
         } catch (error) {
-            alert(editId ? "Failed to edit product" : "Failed to add product");
+            toast.error(editId ? "Failed to edit product" : "Failed to add product");
         }
     };
 

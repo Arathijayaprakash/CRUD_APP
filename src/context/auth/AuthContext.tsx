@@ -3,6 +3,7 @@
 import { loginUser } from "@/app/api/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -16,6 +17,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (loggedInUser) {
                 setUser(loggedInUser);
                 localStorage.setItem("user", JSON.stringify(loggedInUser));
+                toast.success("Logged in successfully")
                 router.replace("/dashboard");
                 return true;
             }
@@ -29,6 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = () => {
         setUser(null);
         localStorage.removeItem("user");
+        toast.success('Logout Successfully')
         router.push("/login");
     };
 

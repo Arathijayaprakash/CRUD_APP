@@ -9,6 +9,7 @@ import { getNames, getCode } from 'country-list';
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { RegisterFormInputs, registerSchema } from "./registerSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -28,10 +29,10 @@ export default function RegisterForm() {
         const payload = { ...data, dob: data.dob ? dayjs(data.dob).format('YYYY-MM-DD') : '', country: data.country ? data.country.name : '' }
         const result = await registerUser(payload);
         if (result.error) {
-            alert(result.error);
+            toast.error(result.error);
             return;
         }
-        alert("Registered successfully!");
+        toast.success("Registered successfully!");
         router.push("/login");
     }
 

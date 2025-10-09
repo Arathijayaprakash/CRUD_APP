@@ -38,6 +38,7 @@ export default function Sidebar() {
                         <li key={link.href}>
                             <Link
                                 href={link.href}
+                                onClick={toggleSidebar}
                                 className={`block p-2 rounded hover:bg-gray-700 ${pathname === link.href ? "bg-gray-700" : ""
                                     }`}
                             >

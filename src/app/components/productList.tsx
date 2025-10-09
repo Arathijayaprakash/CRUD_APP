@@ -6,6 +6,7 @@ import ProductForm from "./addProduct/productForm";
 import DeleteConfirmationModal from "./deleteConfirmationModal";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { deleteProduct, setProducts } from "@/lib/features/products/productSlice";
+import { toast } from "sonner";
 
 export default function ProductList() {
     const products = useAppSelector((state) => state.products);
@@ -29,8 +30,9 @@ export default function ProductList() {
         try {
             dispatch(deleteProduct(deleteId));
             await deleteProductAPI(deleteId);
+            toast.success('Product deleted successfully')
         } catch (error) {
-            alert("Failed to delete product");
+            toast.error("Failed to delete product");
         }
         setIsDeleteModalOpen(false);
     };

@@ -16,12 +16,6 @@ export default function DashboardPage() {
                     <button className="bg-blue-600 text-white py-2 px-4 rounded-lg m-2 hover:bg-blue-700" onClick={() => setIsModalOpen(true)}
                     >Add Product</button>
                     <ProductList />
-                    <button
-                        onClick={logout}
-                        className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
-                    >
-                        Logout
-                    </button>
                 </>
             ) : (
                 <p>Loading...</p>
