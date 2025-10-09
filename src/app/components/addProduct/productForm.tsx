@@ -2,14 +2,14 @@
 
 import { Controller, Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { v4 as uuidv4 } from "uuid";
-import { addProductApi, getProductsById, updateProductAPI } from "../../api/products";
+import { getProductsById } from "../../api/products";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAppDispatch } from "@/lib/hooks";
-import { addProduct, updateProduct } from "@/lib/features/products/productSlice";
 import { ProductFormData, productSchema } from "./productSchema";
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { convertToBase64 } from "@/app/utils";
+import { addProductThunk, updateProductThunk } from "@/lib/features/products/productThunk";
 
 
 export default function ProductForm({
@@ -57,41 +57,14 @@ export default function ProductForm({
         }
     }, [editId, reset]);
 
-    const convertToBase64 = (file: File): Promise<string> =>
-        new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = (error) => reject(error);
-        });
-
     const onSubmit = async (data: ProductFormData) => {
-        console.log(data.image, "onSubmitData@123")
         try {
-            let imageBase64 = imagePreview;
-
-            if (isImageChanged && data.image?.[0]) {
-                imageBase64 = await convertToBase64(data.image[0]);
-            }
-
             if (editId) {
-                const updatedProduct = { ...data, id: editId, image: imageBase64 };
-                console.log(updatedProduct.image, "updatedProduct@123")
-                await updateProductAPI(editId, updatedProduct);
-                dispatch(updateProduct(updatedProduct));
-                alert("Product updated successfully!");
+                dispatch(updateProductThunk({ imagePreview, isImageChanged, data, editId }))
             } else {
-                const newProduct = {
-                    id: uuidv4(),
-                    ...data,
-                    image: data.image?.[0] ? await convertToBase64(data.image[0]) : "",
-                };
-                console.log(newProduct.image, "@123NewProduct")
-                await addProductApi(newProduct);
-                dispatch(addProduct(newProduct));
+                dispatch(addProductThunk(data))
                 alert("Product added successfully!");
             }
-
             reset();
             setIsModalOpen(false);
         } catch (error) {

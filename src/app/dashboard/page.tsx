@@ -9,7 +9,6 @@ export default function DashboardPage() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    console.log(user, "@123")
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
             {user ? (
