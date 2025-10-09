@@ -8,7 +8,6 @@ import { useAppDispatch } from "@/lib/hooks";
 import { ProductFormData, productSchema } from "./productSchema";
 import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { convertToBase64 } from "@/app/utils";
 import { addProductThunk, updateProductThunk } from "@/lib/features/products/productThunk";
 
 

@@ -13,10 +13,6 @@ export default function DashboardPage() {
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
             {user ? (
                 <>
-                    <h1 className="text-3xl font-bold mb-4">Welcome, {user.name}</h1>
-                    <p className="mb-6 text-gray-700 dark:text-gray-300">
-                        Email: {user.email}
-                    </p>
                     <button className="bg-blue-600 text-white py-2 px-4 rounded-lg m-2 hover:bg-blue-700" onClick={() => setIsModalOpen(true)}
                     >Add Product</button>
                     <ProductList />
